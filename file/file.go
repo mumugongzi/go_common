@@ -2,6 +2,7 @@ package file
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -48,4 +49,24 @@ func WriteFile(fileName string, content []string) error {
 		}
 	}
 	return ioutil.WriteFile(fileName, []byte(strings.Join(content, "\n")), 0666)
+}
+
+func ListFile(dir string) ([]string, error) {
+
+	if !strings.HasSuffix(dir, "/") {
+		dir = dir + "/"
+	}
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	var fileNames []string
+	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
+		fileNames = append(fileNames, fmt.Sprintf("%s%s", dir, f.Name()))
+	}
+	return fileNames, err
 }
